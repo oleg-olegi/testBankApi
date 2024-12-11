@@ -1,7 +1,6 @@
 package org.olegi.testbankapi.controller;
 
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.olegi.testbankapi.dto.*;
 import org.olegi.testbankapi.service.TransactionService;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +20,7 @@ import java.util.List;
 @RequestMapping("/api/transaction")
 @AllArgsConstructor
 @Validated
-@Slf4j
+
 public class TransactionController {
 
     private final TransactionService transactionService;

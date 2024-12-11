@@ -2,7 +2,6 @@ package org.olegi.testbankapi.controller;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.olegi.testbankapi.dto.AccountDTO;
 import org.olegi.testbankapi.dto.AccountUpdateDTO;
 import org.olegi.testbankapi.service.AccountService;
@@ -34,10 +33,9 @@ public class AccountController {
         return ResponseEntity.created(location).build();
     }
 
-
     @PutMapping("/updateAccount/{accountId}")
     public ResponseEntity<Void> updateAccount(@PathVariable String accountId,
-                                           @Valid @RequestBody AccountUpdateDTO accountUpdateDTO) {
+                                              @Valid @RequestBody AccountUpdateDTO accountUpdateDTO) {
         accountService.updateAccount(accountId, accountUpdateDTO);
         return ResponseEntity.ok().build();
     }
