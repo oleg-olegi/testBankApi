@@ -10,6 +10,8 @@ import org.olegi.testbankapi.model.Transaction;
 import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.repository.TransactionRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -22,6 +24,7 @@ public class TransferService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void transferMoney(TransferRequestDTO transferRequestDTO) {
         log.info("Initiating transfer: {} from account {} to account {}",
                 transferRequestDTO.getAmount(),

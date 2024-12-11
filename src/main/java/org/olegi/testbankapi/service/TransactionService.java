@@ -13,6 +13,7 @@ import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.repository.TransactionRepository;
 import org.olegi.testbankapi.repository.TransactionRepositoryCustomImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
@@ -37,7 +38,7 @@ public class TransactionService {
                 .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountNumber));
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public AccountDTO deposit(DepositDTO depositDTO) {
         Account account = getAccount(depositDTO.getAccountNumber());
         validateAmount(depositDTO.getAmount());
@@ -48,7 +49,7 @@ public class TransactionService {
         return processTransaction(account, transaction);
     }
 
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public AccountDTO withdraw(WithdrawDTO withdrawDTO) {
         Account account = getAccount(withdrawDTO.getAccountNumber());
         validateAmount(withdrawDTO.getAmount());
@@ -64,7 +65,7 @@ public class TransactionService {
         return processTransaction(account, transaction);
     }
 
-    @Transactional(readOnly = true)
+    @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public List<TransactionDTO> getOperationHistory(Long accountId, LocalDateTime from, LocalDateTime to) {
         accountRepository.findById(accountId)
                 .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountId));
