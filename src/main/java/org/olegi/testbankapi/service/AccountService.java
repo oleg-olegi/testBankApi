@@ -21,6 +21,9 @@ public class AccountService {
     private final AccountMapper accountMapper;
 
     public String createAccount(AccountDTO accountDTO) {
+        if (accountDTO == null) {
+            throw new IllegalArgumentException("Account can not be null");
+        }
         if (accountRepository.existsByAccountNumber(accountDTO.getAccountNumber())) {
             throw new AccountAlreadyExistsException("Account with this number already exists");
         }
@@ -31,6 +34,9 @@ public class AccountService {
     }
 
     public void updateAccount(String accountId, AccountUpdateDTO accountUpdateDTO) {
+        if (accountUpdateDTO == null) {
+            throw new IllegalArgumentException("Account can not be null");
+        }
         log.info("Trying to update account with id {}", accountId);
         Account currentAccount = accountRepository.findByAccountNumber(accountId).orElseThrow(
                 () -> new AccountNotFoundException(
