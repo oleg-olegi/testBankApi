@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class OperationHistoryDTO {
-    private String accountNumber;
-    private LocalDateTime from;
-    private LocalDateTime to;
+    private Long accountId;
+    private LocalDateTime fromDate;
+    private LocalDateTime toDate;
 }

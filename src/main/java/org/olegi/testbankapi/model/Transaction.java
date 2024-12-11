@@ -1,12 +1,6 @@
 package org.olegi.testbankapi.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,9 +26,23 @@ public class Transaction {
     private BigDecimal amount;
 
     @NonNull
-    private LocalDateTime timestamp;
+    @Temporal(TemporalType.TIMESTAMP)
+    private LocalDateTime time_stamp;
 
     @NonNull
     @Enumerated(EnumType.STRING)
     private TransactionTypes transactionType;
+
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
+
+    @Override
+    public String toString() {
+        return "Transaction{" +
+                "id=" + id +
+                ", transactionType='" + transactionType + '\'' +
+                ", amount=" + amount +
+                ", time_stamp=" + time_stamp + '}';
+    }
 }

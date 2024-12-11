@@ -1,12 +1,12 @@
 package org.olegi.testbankapi.controller;
 
 import lombok.AllArgsConstructor;
-import org.olegi.testbankapi.dto.DepositDTO;
-import org.olegi.testbankapi.dto.OperationHistoryDTO;
-import org.olegi.testbankapi.dto.TransactionDTO;
-import org.olegi.testbankapi.dto.WithdrawDTO;
+import lombok.extern.slf4j.Slf4j;
+import org.olegi.testbankapi.dto.*;
 import org.olegi.testbankapi.service.TransactionService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,25 +15,28 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/transaction")
 @AllArgsConstructor
+@Validated
+@Slf4j
 public class TransactionController {
 
     private final TransactionService transactionService;
 
     @PostMapping("/deposit")
-    public ResponseEntity<Void> deposit(@RequestBody DepositDTO depositRequest) {
-        transactionService.deposit(depositRequest.getAccountNumber(), depositRequest.getAmount());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AccountDTO> deposit(@RequestBody DepositDTO depositDTO) {
+        AccountDTO accountDTO = transactionService.deposit(depositDTO);
+        return ResponseEntity.ok(accountDTO);
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<Void> withdraw(@RequestBody WithdrawDTO withdrawRequest) {
-        transactionService.withdraw(withdrawRequest.getAccountNumber(), withdrawRequest.getAmount());
-        return ResponseEntity.ok().build();
+    public ResponseEntity<AccountDTO> withdraw(@RequestBody WithdrawDTO withdrawDTO) {
+        AccountDTO accountDTO = transactionService.withdraw(withdrawDTO);
+        return ResponseEntity.ok(accountDTO);
     }
 
     @GetMapping("/balance")
@@ -43,9 +46,12 @@ public class TransactionController {
     }
 
     @GetMapping("/transactions")
-    public ResponseEntity<List<TransactionDTO>> getOperationsHistory(@RequestBody OperationHistoryDTO request) {
-        List<TransactionDTO> statement = transactionService.getStatement(
-                request.getAccountNumber(), request.getFrom(), request.getTo());
+    public ResponseEntity<List<TransactionDTO>> getOperationsHistory(
+            @RequestParam("accountId") Long accountNumber,
+            @RequestParam("from") LocalDateTime from,
+            @RequestParam("to") LocalDateTime to) {
+
+        List<TransactionDTO> statement = transactionService.getOperationHistory(accountNumber, from, to);
         return ResponseEntity.ok(statement);
     }
 }

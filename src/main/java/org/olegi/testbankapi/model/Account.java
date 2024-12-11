@@ -1,11 +1,6 @@
 package org.olegi.testbankapi.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.PositiveOrZero;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -24,13 +19,21 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(unique = true, nullable = false)
     private String accountNumber;
 
     @Column
     @PositiveOrZero(message = "Balance must be positive or zero")
     private BigDecimal balance;
 
-    @OneToMany
+    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Transaction> transactions;
+
+    @Override
+    public String toString() {
+        return "Account{" +
+                "id=" + id + ", " +
+                "accountNumber='" + accountNumber + '\'' +
+                ", balance=" + balance + '}';
+    }
 }

@@ -31,11 +31,10 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
-    implementation group: 'jakarta.validation', name: 'jakarta.validation-api', version: '3.1.0'
-    implementation group: 'org.mapstruct', name: 'mapstruct', version: '1.6.3'
-    implementation group: 'org.mapstruct', name: 'mapstruct-processor', version: '1.6.3'
+    implementation 'org.hibernate:hibernate-validator:6.1.7.Final'
+    implementation 'org.mapstruct:mapstruct:1.6.3'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
 }
-
 tasks.named('test') {
     useJUnitPlatform()
 }
