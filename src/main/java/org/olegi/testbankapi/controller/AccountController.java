@@ -46,10 +46,10 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Аккаунт успешно обновлен"),
             @ApiResponse(responseCode = "404", description = "Аккаунт не найден")
     })
-    @PutMapping("/updateAccount/{accountId}")
-    public ResponseEntity<Void> updateAccount(@PathVariable String accountId,
+    @PutMapping("/updateAccount/{accountNumber}")
+    public ResponseEntity<Void> updateAccount(@PathVariable String accountNumber,
                                               @Valid @RequestBody AccountUpdateDTO accountUpdateDTO) {
-        accountService.updateAccount(accountId, accountUpdateDTO);
+        accountService.updateAccount(accountNumber, accountUpdateDTO);
         return ResponseEntity.ok().build();
     }
 

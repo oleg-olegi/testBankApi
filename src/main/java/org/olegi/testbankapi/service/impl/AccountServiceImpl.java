@@ -11,7 +11,9 @@ import org.olegi.testbankapi.model.Account;
 import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.service.AccountService;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 @Service
 @AllArgsConstructor
@@ -22,6 +24,7 @@ public class AccountServiceImpl implements AccountService {
     private final AccountMapper accountMapper;
 
     @Override
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String createAccount(AccountDTO accountDTO) {
         if (accountDTO == null) {
             throw new IllegalArgumentException("Account can not be null");
@@ -36,15 +39,15 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-
-    public void updateAccount(String accountId, AccountUpdateDTO accountUpdateDTO) {
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void updateAccount(String accountNumber, AccountUpdateDTO accountUpdateDTO) {
         if (accountUpdateDTO == null) {
-            throw new IllegalArgumentException("Account can not be null");
+            throw new IllegalArgumentException("Account DTO can not be null");
         }
-        log.info("Trying to update account with id {}", accountId);
-        Account currentAccount = accountRepository.findByAccountNumber(accountId).orElseThrow(
+        log.info("Trying to update account with number {}", accountNumber);
+        Account currentAccount = accountRepository.findByAccountNumber(accountNumber).orElseThrow(
                 () -> new AccountNotFoundException(
-                        String.format("Account '%s' not found", accountId))
+                        String.format("Account '%s' not found", accountNumber))
         );
         log.info("Data for updating {}", accountUpdateDTO);
         if (accountUpdateDTO.getAccountNumber() != null) {
@@ -55,6 +58,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AccountDTO getAccountInfo(String accountId) {
         log.info("Trying to get account info with id {}", accountId);
         Account currentAccount = accountRepository.findByAccountNumber(accountId).orElseThrow(
@@ -65,7 +69,7 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    @Transactional
+    @Transactional(isolation = Isolation.SERIALIZABLE)
     public void deleteAccount(String accountNumber) {
         log.info("Trying to delete account with id {}", accountNumber);
         if (accountRepository.existsByAccountNumber(accountNumber)) {

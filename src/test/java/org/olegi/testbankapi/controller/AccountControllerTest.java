@@ -69,7 +69,7 @@ class AccountControllerTest {
 
     @Test
     void testUpdateAccount_Success() throws Exception {
-        AccountUpdateDTO updateDTO = new AccountUpdateDTO("G1234567891", new BigDecimal("2000.00"));
+        AccountUpdateDTO updateDTO = new AccountUpdateDTO("G1234567891");
 
         mockMvc.perform(put("/api/account/updateAccount/{accountId}", "12345")
                         .contentType(MediaType.APPLICATION_JSON)

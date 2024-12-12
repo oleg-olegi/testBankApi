@@ -8,6 +8,6 @@ import org.olegi.testbankapi.model.Transaction;
 
 @Mapper
 public interface TransactionMapper {
-    @Mapping(source = "transaction.time_stamp", target = "timestamp")
+    @Mapping(source = "transaction.timeStamp", target = "timestamp")
     TransactionDTO transactionToTransactionDTO(Transaction transaction);
 }

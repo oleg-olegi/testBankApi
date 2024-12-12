@@ -26,7 +26,6 @@ import java.util.List;
 @RequestMapping("/api/transaction")
 @AllArgsConstructor
 @Validated
-
 public class TransactionController {
 
     private final TransactionService transactionService;

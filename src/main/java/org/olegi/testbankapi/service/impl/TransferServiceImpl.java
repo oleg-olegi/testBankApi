@@ -82,7 +82,7 @@ public class TransferServiceImpl implements TransferService {
         transactionFrom.setAmount(amount);
         transactionFrom.setTransactionType(TransactionTypes.TRANSFER);
         transactionFrom.setAccount(accountFrom);
-        transactionFrom.setTime_stamp(LocalDateTime.now());
+        transactionFrom.setTimeStamp(LocalDateTime.now());
         return transactionFrom;
     }
 }

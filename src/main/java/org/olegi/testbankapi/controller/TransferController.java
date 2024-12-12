@@ -31,7 +31,7 @@ public class TransferController {
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     @PostMapping("/transfer")
-    public ResponseEntity<?> doTransfer(@RequestBody TransferRequestDTO transferRequestDTO) {
+    public ResponseEntity<String> doTransfer(@RequestBody TransferRequestDTO transferRequestDTO) {
         log.info("Transfer request: {}", transferRequestDTO.toString());
         transferService.transferMoney(transferRequestDTO);
         return ResponseEntity.ok("Transfer successful");
