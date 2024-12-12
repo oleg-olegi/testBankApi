@@ -47,6 +47,8 @@ dependencies {
     implementation 'org.hibernate:hibernate-validator:8.0.0.Final'
     implementation 'org.mapstruct:mapstruct:1.6.3'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.6.3'
+    implementation group: 'org.springdoc', name: 'springdoc-openapi-starter-webmvc-ui', version: '2.7.0'
+
 }
 tasks.named('test') {
     useJUnitPlatform()

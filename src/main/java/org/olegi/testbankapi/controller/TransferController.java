@@ -1,5 +1,8 @@
 package org.olegi.testbankapi.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.AllArgsConstructor;
 import org.olegi.testbankapi.dto.TransferRequestDTO;
 import org.olegi.testbankapi.service.TransferService;
@@ -21,6 +24,12 @@ public class TransferController {
     private static final Logger log = LoggerFactory.getLogger(TransferController.class);
     private final TransferService transferService;
 
+    @Operation(summary = "Transfer money between accounts", description = "Transfers a specified amount from one account to another.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Transfer successful"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PostMapping("/transfer")
     public ResponseEntity<?> doTransfer(@RequestBody TransferRequestDTO transferRequestDTO) {
         log.info("Transfer request: {}", transferRequestDTO.toString());
