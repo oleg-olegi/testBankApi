@@ -50,9 +50,6 @@ public class AccountServiceImpl implements AccountService {
         if (accountUpdateDTO.getAccountNumber() != null) {
             currentAccount.setAccountNumber(accountUpdateDTO.getAccountNumber());
         }
-        if (accountUpdateDTO.getBalance() != null) {
-            currentAccount.setBalance(accountUpdateDTO.getBalance());
-        }
         accountRepository.save(currentAccount);
         log.info("Account successfully updated to DB");
     }
