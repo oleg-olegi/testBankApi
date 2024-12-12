@@ -11,6 +11,7 @@ import org.olegi.testbankapi.exceptions.AccountNotFoundException;
 import org.olegi.testbankapi.mapper.AccountMapper;
 import org.olegi.testbankapi.model.Account;
 import org.olegi.testbankapi.repository.AccountRepository;
+import org.olegi.testbankapi.service.impl.AccountServiceImpl;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.mockito.Mockito.*;
@@ -26,7 +27,7 @@ class AccountServiceTest {
     @Mock
     private AccountMapper accountMapper;
     @InjectMocks
-    private AccountService accountService;
+    private AccountServiceImpl accountService;
     private Account account;
     private AccountDTO accountDTO;
     private AccountUpdateDTO accountUpdateDTO;
@@ -98,6 +99,7 @@ class AccountServiceTest {
         assertThrows(AccountNotFoundException.class, () -> accountService.deleteAccount(account.getAccountNumber()));
         verify(accountRepository, never()).deleteByAccountNumber(anyString());
     }
+
     @Test
     public void testCreateAccount_NullInput() {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {

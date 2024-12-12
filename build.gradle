@@ -18,6 +18,19 @@ configurations {
         extendsFrom annotationProcessor
     }
 }
+bootJar {
+    launchScript()
+    manifest {
+        attributes 'Start-Class': 'org.olegi.testbankapi.TestBankApiApplication'
+    }
+}
+
+processResources {
+    filesMatching("application.properties") {
+        expand(project: project)
+    }
+}
+
 
 repositories {
     mavenCentral()

@@ -9,7 +9,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TransactionRepository extends JpaRepository<Transaction, Long> {
-    @Query(nativeQuery = true, value = "SELECT * FROM transaction t WHERE t.account_id = :accountId AND t.time_stamp BETWEEN :from AND :to")
+    @Query(nativeQuery = true,
+            value = "SELECT * FROM transaction t WHERE t.account_id = :accountId AND t.time_stamp BETWEEN :from AND :to")
     List<Transaction> findByAccountIdAndTimestampBetween(
             @Param("accountId") long accountId,
             @Param("from") LocalDateTime from,
