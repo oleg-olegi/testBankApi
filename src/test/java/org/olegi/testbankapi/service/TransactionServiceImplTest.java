@@ -40,9 +40,6 @@ class TransactionServiceImplTest {
     @Mock
     private TransactionMapper transactionMapper;
 
-    @Mock
-    private TransactionRepositoryCustomImpl transactionRepositoryCustom;
-
     @InjectMocks
     private TransactionServiceImpl transactionService;
 
@@ -89,7 +86,10 @@ class TransactionServiceImplTest {
     @Test
     void testDeposit_Success() {
         when(accountRepository.findByAccountNumber(depositDTO.getAccountNumber())).thenReturn(Optional.of(account));
-        when(accountMapper.accountToAccountDTO(account)).thenReturn(new AccountDTO(account.getAccountNumber(), account.getBalance().add(depositDTO.getAmount())));
+        when(accountMapper.accountToAccountDTO(account))
+                .thenReturn(new AccountDTO(
+                        account.getAccountNumber(),
+                        account.getBalance().add(depositDTO.getAmount())));
 
         AccountDTO result = transactionService.deposit(depositDTO);
 
@@ -114,7 +114,10 @@ class TransactionServiceImplTest {
     @Test
     void testWithdraw_Success() {
         when(accountRepository.findByAccountNumber(withdrawDTO.getAccountNumber())).thenReturn(Optional.of(account));
-        when(accountMapper.accountToAccountDTO(account)).thenReturn(new AccountDTO(account.getAccountNumber(), account.getBalance().subtract(withdrawDTO.getAmount())));
+        when(accountMapper.accountToAccountDTO(account))
+                .thenReturn(new AccountDTO(
+                        account.getAccountNumber(),
+                        account.getBalance().subtract(withdrawDTO.getAmount())));
 
         AccountDTO result = transactionService.withdraw(withdrawDTO);
 
@@ -144,15 +147,20 @@ class TransactionServiceImplTest {
         LocalDateTime to = LocalDateTime.now();
 
         when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
-        when(transactionRepositoryCustom.findByAccountIdAndTimestampBetweenCriteria(account.getId(), from, to))
+        when(transactionRepository.findByAccountIdAndTimestampBetween(account.getId(), from, to))
                 .thenReturn(List.of(transaction));
-        when(transactionMapper.transactionToTransactionDTO(transaction)).thenReturn(new TransactionDTO(transaction.getAmount(), transaction.getTime_stamp(), transaction.getTransactionType()));
+        when(transactionMapper.transactionToTransactionDTO(transaction))
+                .thenReturn(new TransactionDTO(
+                        transaction.getAmount(),
+                        transaction.getTime_stamp(),
+                        transaction.getTransactionType()));
 
         List<TransactionDTO> result = transactionService.getOperationHistory(account.getId(), from, to);
 
         assertEquals(1, result.size());
         assertEquals(transaction.getAmount(), result.get(0).getAmount());
-        verify(transactionRepositoryCustom, times(1)).findByAccountIdAndTimestampBetweenCriteria(account.getId(), from, to);
+        verify(transactionRepository, times(1))
+                .findByAccountIdAndTimestampBetween(account.getId(), from, to);
     }
 
     @Test
@@ -167,6 +175,7 @@ class TransactionServiceImplTest {
         });
 
         assertEquals("Account not found: 1", exception.getMessage());
-        verify(transactionRepositoryCustom, times(0)).findByAccountIdAndTimestampBetweenCriteria(account.getId(), from, to);
+        verify(transactionRepository, times(0))
+                .findByAccountIdAndTimestampBetween(account.getId(), from, to);
     }
 }
