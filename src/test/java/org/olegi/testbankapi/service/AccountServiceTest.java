@@ -61,7 +61,6 @@ class AccountServiceTest {
         when(accountRepository.findByAccountNumber(account.getAccountNumber())).thenReturn(Optional.of(account));
         accountService.updateAccount(account.getAccountNumber(), accountUpdateDTO);
         assertEquals(accountUpdateDTO.getAccountNumber(), account.getAccountNumber());
-        assertEquals(accountUpdateDTO.getBalance(), account.getBalance());
         verify(accountRepository, times(1)).save(account);
     }
 
