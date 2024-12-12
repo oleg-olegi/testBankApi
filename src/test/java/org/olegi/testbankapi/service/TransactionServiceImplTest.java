@@ -13,7 +13,7 @@ import org.olegi.testbankapi.model.Account;
 import org.olegi.testbankapi.model.Transaction;
 import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.repository.TransactionRepository;
-import org.olegi.testbankapi.repository.TransactionRepositoryCustomImpl;
+import org.olegi.testbankapi.service.impl.TransactionServiceImpl;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.math.BigDecimal;
@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
-class TransactionServiceTest {
+class TransactionServiceImplTest {
 
     @Mock
     private TransactionRepository transactionRepository;
@@ -44,7 +44,7 @@ class TransactionServiceTest {
     private TransactionRepositoryCustomImpl transactionRepositoryCustom;
 
     @InjectMocks
-    private TransactionService transactionService;
+    private TransactionServiceImpl transactionService;
 
     private Account account;
     private DepositDTO depositDTO;

@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.olegi.testbankapi.dto.*;
 import org.olegi.testbankapi.enums.TransactionTypes;
-import org.olegi.testbankapi.service.TransactionService;
+import org.olegi.testbankapi.service.impl.TransactionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -34,7 +34,7 @@ class TransactionControllerTest {
 
     @MockitoBean
     @Autowired
-    private TransactionService transactionService;
+    private TransactionServiceImpl transactionServiceImpl;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -54,7 +54,7 @@ class TransactionControllerTest {
 
     @Test
     void testDeposit_Success() throws Exception {
-        Mockito.when(transactionService.deposit(any(DepositDTO.class))).thenReturn(accountDTO);
+        Mockito.when(transactionServiceImpl.deposit(any(DepositDTO.class))).thenReturn(accountDTO);
 
         mockMvc.perform(post("/api/transaction/deposit")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -65,7 +65,7 @@ class TransactionControllerTest {
 
     @Test
     void testWithdraw_Success() throws Exception {
-        Mockito.when(transactionService.withdraw(any(WithdrawDTO.class))).thenReturn(accountDTO);
+        Mockito.when(transactionServiceImpl.withdraw(any(WithdrawDTO.class))).thenReturn(accountDTO);
 
         mockMvc.perform(post("/api/transaction/withdraw")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -76,7 +76,7 @@ class TransactionControllerTest {
 
     @Test
     void testGetBalance_Success() throws Exception {
-        Mockito.when(transactionService.getBalance("1234567890")).thenReturn(new BigDecimal("1500.00"));
+        Mockito.when(transactionServiceImpl.getBalance("1234567890")).thenReturn(new BigDecimal("1500.00"));
 
         mockMvc.perform(get("/api/transaction/balance")
                         .param("accountNumber", "1234567890"))
@@ -86,7 +86,7 @@ class TransactionControllerTest {
 
     @Test
     void testGetOperationsHistory_Success() throws Exception {
-        Mockito.when(transactionService.getOperationHistory(any(Long.class), any(LocalDateTime.class), any(LocalDateTime.class)))
+        Mockito.when(transactionServiceImpl.getOperationHistory(any(Long.class), any(LocalDateTime.class), any(LocalDateTime.class)))
                 .thenReturn(Collections.singletonList(transactionDTO));
 
         mockMvc.perform(get("/api/transaction/transactions")

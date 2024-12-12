@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
 import org.olegi.testbankapi.dto.TransferRequestDTO;
-import org.olegi.testbankapi.service.TransferService;
+import org.olegi.testbankapi.service.impl.TransferServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.http.MediaType;
@@ -29,7 +29,7 @@ class TransferControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
-    private TransferService transferService;
+    private TransferServiceImpl transferServiceImpl;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -46,7 +46,7 @@ class TransferControllerTest {
 
     @Test
     void testDoTransfer_Success() throws Exception {
-        Mockito.doNothing().when(transferService).transferMoney(any(TransferRequestDTO.class));
+        Mockito.doNothing().when(transferServiceImpl).transferMoney(any(TransferRequestDTO.class));
 
         mockMvc.perform(post("/api/transfer")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -57,7 +57,7 @@ class TransferControllerTest {
 
     @Test
     void testDoTransfer_Failed() throws Exception {
-        Mockito.doThrow(IllegalArgumentException.class).when(transferService).transferMoney(any(TransferRequestDTO.class));
+        Mockito.doThrow(IllegalArgumentException.class).when(transferServiceImpl).transferMoney(any(TransferRequestDTO.class));
 
         mockMvc.perform(post("/api/transfer")
                         .contentType(MediaType.APPLICATION_JSON)

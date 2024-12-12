@@ -1,7 +1,10 @@
 package org.olegi.testbankapi.controller;
 
 import lombok.AllArgsConstructor;
-import org.olegi.testbankapi.dto.*;
+import org.olegi.testbankapi.dto.AccountDTO;
+import org.olegi.testbankapi.dto.DepositDTO;
+import org.olegi.testbankapi.dto.TransactionDTO;
+import org.olegi.testbankapi.dto.WithdrawDTO;
 import org.olegi.testbankapi.service.TransactionService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -45,11 +48,11 @@ public class TransactionController {
 
     @GetMapping("/transactions")
     public ResponseEntity<List<TransactionDTO>> getOperationsHistory(
-            @RequestParam("accountId") Long accountNumber,
+            @RequestParam("accountId") Long accountId,
             @RequestParam("from") LocalDateTime from,
             @RequestParam("to") LocalDateTime to) {
 
-        List<TransactionDTO> statement = transactionService.getOperationHistory(accountNumber, from, to);
+        List<TransactionDTO> statement = transactionService.getOperationHistory(accountId, from, to);
         return ResponseEntity.ok(statement);
     }
 }
