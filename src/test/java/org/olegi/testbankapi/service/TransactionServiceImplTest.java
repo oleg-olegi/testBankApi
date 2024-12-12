@@ -57,7 +57,7 @@ class TransactionServiceImplTest {
         transaction = new Transaction();
         transaction.setTransactionType(TransactionTypes.DEPOSIT);
         transaction.setAmount(depositDTO.getAmount());
-        transaction.setTime_stamp(LocalDateTime.now());
+        transaction.setTimeStamp(LocalDateTime.now());
         transaction.setAccount(account);
     }
 
@@ -146,13 +146,13 @@ class TransactionServiceImplTest {
         LocalDateTime from = LocalDateTime.now().minusDays(7);
         LocalDateTime to = LocalDateTime.now();
 
-        when(accountRepository.findById(account.getId())).thenReturn(Optional.of(account));
+        when(accountRepository.existsById(account.getId())).thenReturn(true);
         when(transactionRepository.findByAccountIdAndTimestampBetween(account.getId(), from, to))
                 .thenReturn(List.of(transaction));
         when(transactionMapper.transactionToTransactionDTO(transaction))
                 .thenReturn(new TransactionDTO(
                         transaction.getAmount(),
-                        transaction.getTime_stamp(),
+                        transaction.getTimeStamp(),
                         transaction.getTransactionType()));
 
         List<TransactionDTO> result = transactionService.getOperationHistory(account.getId(), from, to);

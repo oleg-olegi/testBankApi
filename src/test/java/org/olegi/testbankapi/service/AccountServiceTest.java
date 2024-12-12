@@ -36,7 +36,7 @@ class AccountServiceTest {
     void setUp() {
         account = new Account(1L, "1234567890", BigDecimal.valueOf(1000), null);
         accountDTO = new AccountDTO("1234567890", BigDecimal.valueOf(1000));
-        accountUpdateDTO = new AccountUpdateDTO("0987654321", BigDecimal.valueOf(2000));
+        accountUpdateDTO = new AccountUpdateDTO("0987654321");
     }
 
     @Test

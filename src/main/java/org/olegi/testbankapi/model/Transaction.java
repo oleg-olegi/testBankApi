@@ -26,10 +26,12 @@ public class Transaction {
     private BigDecimal amount;
 
     @NonNull
+    @Column(name = "time_stamp")
     @Temporal(TemporalType.TIMESTAMP)
-    private LocalDateTime time_stamp;
+    private LocalDateTime timeStamp;
 
     @NonNull
+    @Column
     @Enumerated(EnumType.STRING)
     private TransactionTypes transactionType;
 
@@ -43,6 +45,6 @@ public class Transaction {
                 "id=" + id +
                 ", transactionType='" + transactionType + '\'' +
                 ", amount=" + amount +
-                ", time_stamp=" + time_stamp + '}';
+                ", time_stamp=" + timeStamp + '}';
     }
 }

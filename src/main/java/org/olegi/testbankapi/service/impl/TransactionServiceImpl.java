@@ -18,6 +18,7 @@ import org.olegi.testbankapi.service.TransactionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -73,8 +74,9 @@ public class TransactionServiceImpl implements TransactionService {
     @Override
     @Transactional(readOnly = true, isolation = Isolation.REPEATABLE_READ)
     public List<TransactionDTO> getOperationHistory(Long accountId, LocalDateTime from, LocalDateTime to) {
-        accountRepository.findById(accountId)
-                .orElseThrow(() -> new AccountNotFoundException("Account not found: " + accountId));
+        if (!accountRepository.existsById(accountId)) {
+            throw new AccountNotFoundException("Account not found: " + accountId);
+        }
 
         log.info("Account ID: {}, From Date: {}, To Date: {}", accountId, from, to);
 
@@ -101,7 +103,7 @@ public class TransactionServiceImpl implements TransactionService {
         Transaction transaction = new Transaction();
         transaction.setTransactionType(transactionType);
         transaction.setAmount(amount);
-        transaction.setTime_stamp(LocalDateTime.now());
+        transaction.setTimeStamp(LocalDateTime.now());
         transaction.setAccount(account);
         return transaction;
     }
