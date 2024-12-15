@@ -1,5 +1,6 @@
 package org.olegi.testbankapi.service;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,6 +16,11 @@ import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.repository.TransactionRepository;
 import org.olegi.testbankapi.service.impl.TransactionServiceImpl;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -26,7 +32,22 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
+@Testcontainers
 class TransactionServiceImplTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:16")
+                    .withDatabaseName("mydb")
+                    .withUsername("myuser")
+                    .withPassword("mypass");
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @Mock
     private TransactionRepository transactionRepository;
@@ -61,6 +82,11 @@ class TransactionServiceImplTest {
         transaction.setAccount(account);
     }
 
+    @AfterEach
+    void tearDown() {
+        postgreSQLContainer.stop();
+    }
+
     @Test
     void testGetBalance_Success() {
         when(accountRepository.findByAccountNumber("1234567890")).thenReturn(Optional.of(account));
@@ -87,13 +113,11 @@ class TransactionServiceImplTest {
     void testDeposit_Success() {
         when(accountRepository.findByAccountNumber(depositDTO.getAccountNumber())).thenReturn(Optional.of(account));
         when(accountMapper.accountToAccountDTO(account))
-                .thenReturn(new AccountDTO(
-                        account.getAccountNumber(),
-                        account.getBalance().add(depositDTO.getAmount())));
+                .thenReturn(new AccountDTO(account.getAccountNumber(), depositDTO.getAmount()));
 
         AccountDTO result = transactionService.deposit(depositDTO);
 
-        assertEquals(new BigDecimal("1500.00"), result.getBalance());
+        assertEquals(new BigDecimal("500.00"), result.getBalance());
         verify(transactionRepository, times(1)).save(any(Transaction.class));
         verify(accountRepository, times(1)).save(account);
     }

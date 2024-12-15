@@ -3,7 +3,6 @@ package org.olegi.testbankapi.service.impl;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.olegi.testbankapi.dto.AccountDTO;
-import org.olegi.testbankapi.dto.AccountUpdateDTO;
 import org.olegi.testbankapi.exceptions.AccountAlreadyExistsException;
 import org.olegi.testbankapi.exceptions.AccountNotFoundException;
 import org.olegi.testbankapi.mapper.AccountMapper;
@@ -13,7 +12,8 @@ import org.olegi.testbankapi.service.AccountService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
+
+import java.math.BigDecimal;
 
 @Service
 @AllArgsConstructor
@@ -33,6 +33,7 @@ public class AccountServiceImpl implements AccountService {
             throw new AccountAlreadyExistsException("Account with this number already exists");
         }
         Account newAccount = accountMapper.accountDTOToAccount(accountDTO);
+        newAccount.setBalance(BigDecimal.ZERO);
         accountRepository.save(newAccount);
         log.info("Account successfully saved to DB");
         return newAccount.getAccountNumber();
@@ -40,8 +41,8 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void updateAccount(String accountNumber, AccountUpdateDTO accountUpdateDTO) {
-        if (accountUpdateDTO == null) {
+    public void updateAccount(String accountNumber, AccountDTO accountDTO) {
+        if (accountDTO == null) {
             throw new IllegalArgumentException("Account DTO can not be null");
         }
         log.info("Trying to update account with number {}", accountNumber);
@@ -49,9 +50,9 @@ public class AccountServiceImpl implements AccountService {
                 () -> new AccountNotFoundException(
                         String.format("Account '%s' not found", accountNumber))
         );
-        log.info("Data for updating {}", accountUpdateDTO);
-        if (accountUpdateDTO.getAccountNumber() != null) {
-            currentAccount.setAccountNumber(accountUpdateDTO.getAccountNumber());
+        log.info("Data for updating {}", accountDTO);
+        if (accountDTO.getAccountNumber() != null) {
+            currentAccount.setAccountNumber(accountDTO.getAccountNumber());
         }
         accountRepository.save(currentAccount);
         log.info("Account successfully updated to DB");
@@ -59,17 +60,17 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AccountDTO getAccountInfo(String accountId) {
-        log.info("Trying to get account info with id {}", accountId);
-        Account currentAccount = accountRepository.findByAccountNumber(accountId).orElseThrow(
+    public AccountDTO getAccountInfo(String accountNumber) {
+        log.info("Trying to get account info with id {}", accountNumber);
+        Account currentAccount = accountRepository.findByAccountNumber(accountNumber).orElseThrow(
                 () -> new AccountNotFoundException(
-                        String.format("Account '%s' not found", accountId))
+                        String.format("Account '%s' not found", accountNumber))
         );
         return accountMapper.accountToAccountDTO(currentAccount);
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteAccount(String accountNumber) {
         log.info("Trying to delete account with id {}", accountNumber);
         if (accountRepository.existsByAccountNumber(accountNumber)) {

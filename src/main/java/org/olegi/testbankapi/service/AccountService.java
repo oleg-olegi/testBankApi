@@ -1,14 +1,13 @@
 package org.olegi.testbankapi.service;
 
 import org.olegi.testbankapi.dto.AccountDTO;
-import org.olegi.testbankapi.dto.AccountUpdateDTO;
 
 public interface AccountService {
     String createAccount(AccountDTO accountDTO);
 
-    void updateAccount(String accountId, AccountUpdateDTO accountUpdateDTO);
+    void updateAccount(String accountNumber, AccountDTO accountDTO);
 
-    void deleteAccount(String accountId);
+    void deleteAccount(String accountNumber);
 
-    AccountDTO getAccountInfo(String accountId);
+    AccountDTO getAccountInfo(String accountNumber);
 }

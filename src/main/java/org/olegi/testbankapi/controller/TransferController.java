@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/transfer")
 @Validated
 public class TransferController {
 
@@ -30,7 +30,7 @@ public class TransferController {
             @ApiResponse(responseCode = "400", description = "Invalid request"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    @PostMapping("/transfer")
+    @PostMapping
     public ResponseEntity<String> doTransfer(@RequestBody TransferRequestDTO transferRequestDTO) {
         log.info("Transfer request: {}", transferRequestDTO.toString());
         transferService.transferMoney(transferRequestDTO);

@@ -3,6 +3,8 @@ package org.olegi.testbankapi.exceptions;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.jdbc.support.MetaDataAccessException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -14,6 +16,13 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleUserNotFoundException(AccountNotFoundException e) {
         log.error("Account not found: {}", e.getMessage(), e);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("User not found: " + e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<String> handleAmountInDepositMustBePositiveException(
+            DepositMustBePositiveException e) {
+        log.error("Account not found: {}", e.getMessage(), e);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User not found: " + e.getMessage());
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

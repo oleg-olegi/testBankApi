@@ -25,7 +25,7 @@ public class TransferServiceImpl implements TransferService {
     private final AccountRepository accountRepository;
     private final TransactionRepository transactionRepository;
 
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void transferMoney(TransferRequestDTO transferRequestDTO) {
         log.info("Initiating transfer: {} from account {} to account {}",
                 transferRequestDTO.getAmount(),
