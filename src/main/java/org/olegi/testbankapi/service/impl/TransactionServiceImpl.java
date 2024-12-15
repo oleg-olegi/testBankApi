@@ -8,6 +8,7 @@ import org.olegi.testbankapi.dto.TransactionDTO;
 import org.olegi.testbankapi.dto.WithdrawDTO;
 import org.olegi.testbankapi.enums.TransactionTypes;
 import org.olegi.testbankapi.exceptions.AccountNotFoundException;
+import org.olegi.testbankapi.exceptions.DepositMustBePositiveException;
 import org.olegi.testbankapi.mapper.AccountMapper;
 import org.olegi.testbankapi.mapper.TransactionMapper;
 import org.olegi.testbankapi.model.Account;
@@ -18,7 +19,6 @@ import org.olegi.testbankapi.service.TransactionService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.validation.annotation.Validated;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -43,7 +43,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AccountDTO deposit(DepositDTO depositDTO) {
         Account account = getAccount(depositDTO.getAccountNumber());
         validateAmount(depositDTO.getAmount());
@@ -55,7 +55,7 @@ public class TransactionServiceImpl implements TransactionService {
     }
 
     @Override
-    @Transactional(isolation = Isolation.SERIALIZABLE)
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AccountDTO withdraw(WithdrawDTO withdrawDTO) {
         Account account = getAccount(withdrawDTO.getAccountNumber());
         validateAmount(withdrawDTO.getAmount());
@@ -79,7 +79,9 @@ public class TransactionServiceImpl implements TransactionService {
         }
 
         log.info("Account ID: {}, From Date: {}, To Date: {}", accountId, from, to);
-
+        if (to.isBefore(from)) {
+            throw new IllegalArgumentException("From Date is less than To");
+        }
         List<Transaction> transactions = transactionRepository.findByAccountIdAndTimestampBetween(accountId, from, to);
 
         log.info("Found {} transactions", transactions.size());
@@ -95,7 +97,7 @@ public class TransactionServiceImpl implements TransactionService {
 
     private void validateAmount(BigDecimal amount) {
         if (amount.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new IllegalArgumentException("Amount must be greater than zero");
+            throw new DepositMustBePositiveException("Amount must be greater than zero");
         }
     }
 

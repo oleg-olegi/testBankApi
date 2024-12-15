@@ -7,6 +7,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.any;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.*;
@@ -18,12 +19,32 @@ import org.olegi.testbankapi.repository.AccountRepository;
 import org.olegi.testbankapi.repository.TransactionRepository;
 import org.olegi.testbankapi.service.impl.TransferServiceImpl;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.math.BigDecimal;
 import java.util.Optional;
 
 @SpringBootTest
+@Testcontainers
 public class TransferServiceImplTest {
+
+    @Container
+    private static final PostgreSQLContainer<?> postgreSQLContainer =
+            new PostgreSQLContainer<>("postgres:16")
+                    .withDatabaseName("mydb")
+                    .withUsername("myuser")
+                    .withPassword("mypass");
+
+    @DynamicPropertySource
+    static void properties(DynamicPropertyRegistry registry) {
+        registry.add("spring.datasource.url", postgreSQLContainer::getJdbcUrl);
+        registry.add("spring.datasource.password", postgreSQLContainer::getPassword);
+        registry.add("spring.datasource.username", postgreSQLContainer::getUsername);
+    }
 
     @Mock
     private AccountRepository accountRepository;
@@ -45,6 +66,11 @@ public class TransferServiceImplTest {
         accountTo = new Account();
         accountTo.setAccountNumber("0987654321");
         accountTo.setBalance(BigDecimal.valueOf(500));
+    }
+
+    @AfterEach
+    void tearDown() {
+        postgreSQLContainer.stop();
     }
 
     @Test

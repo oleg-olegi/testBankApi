@@ -29,6 +29,7 @@ class TransferControllerTest {
     private MockMvc mockMvc;
 
     @MockitoBean
+    @Autowired
     private TransferServiceImpl transferServiceImpl;
 
     @Autowired

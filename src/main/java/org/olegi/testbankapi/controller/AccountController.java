@@ -6,7 +6,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.olegi.testbankapi.dto.AccountDTO;
-import org.olegi.testbankapi.dto.AccountUpdateDTO;
 import org.olegi.testbankapi.service.AccountService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.net.URI;
 
 @RestController
-@RequestMapping("/api/account")
+@RequestMapping("/api/accounts")
 @AllArgsConstructor
 @Validated
 public class AccountController {
@@ -27,7 +26,7 @@ public class AccountController {
             @ApiResponse(responseCode = "201", description = "Аккаунт успешно создан"),
             @ApiResponse(responseCode = "400", description = "Некорректные входные данные")
     })
-    @PostMapping("/createAccount")
+    @PostMapping
     public ResponseEntity<Void> createAccount(@Valid @RequestBody AccountDTO accountDTO) {
         String accountId = accountService.createAccount(accountDTO);
         URI location = URI.create("/accounts/" + accountId);
@@ -39,10 +38,10 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Аккаунт успешно обновлен"),
             @ApiResponse(responseCode = "404", description = "Аккаунт не найден")
     })
-    @PatchMapping("/updateAccount/{accountNumber}")
+    @PatchMapping("/{accountNumber}")
     public ResponseEntity<Void> updateAccount(@PathVariable String accountNumber,
-                                              @Valid @RequestBody AccountUpdateDTO accountUpdateDTO) {
-        accountService.updateAccount(accountNumber, accountUpdateDTO);
+                                              @Valid @RequestBody AccountDTO accountDTO) {
+        accountService.updateAccount(accountNumber, accountDTO);
         return ResponseEntity.ok().build();
     }
 
@@ -51,9 +50,9 @@ public class AccountController {
             @ApiResponse(responseCode = "200", description = "Информация об аккаунте получена"),
             @ApiResponse(responseCode = "404", description = "Аккаунт не найден")
     })
-    @GetMapping("/getAccountInfo/{accountId}")
-    public ResponseEntity<AccountDTO> getAccountInfo(@Valid @PathVariable String accountId) {
-        AccountDTO accountDTO = accountService.getAccountInfo(accountId);
+    @GetMapping("/{accountNumber}")
+    public ResponseEntity<AccountDTO> getAccountInfo(@Valid @PathVariable String accountNumber) {
+        AccountDTO accountDTO = accountService.getAccountInfo(accountNumber);
         return ResponseEntity.ok(accountDTO);
     }
 
@@ -62,9 +61,9 @@ public class AccountController {
             @ApiResponse(responseCode = "204", description = "Аккаунт успешно удален"),
             @ApiResponse(responseCode = "404", description = "Аккаунт не найден")
     })
-    @DeleteMapping("/delete/{accountId}")
-    public ResponseEntity<Void> deleteAccount(@Valid @PathVariable String accountId) {
-        accountService.deleteAccount(accountId);
+    @DeleteMapping("/{accountNumber}")
+    public ResponseEntity<Void> deleteAccount(@Valid @PathVariable String accountNumber) {
+        accountService.deleteAccount(accountNumber);
         return ResponseEntity.noContent().build();
     }
 }
